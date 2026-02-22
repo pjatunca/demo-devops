@@ -1,0 +1,40 @@
+name: CI - Proyecto DSWII
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      # Test Eureka
+      - name: Build & Test Eureka Server
+        run: |
+          cd tema06-eureka-server
+          mvn clean verify
+      
+      # Test Vuelo
+      - name: Build & Test Vuelo Service
+        run: |
+          cd tema06-vuelo-service
+          mvn clean verify
+
+      # Docker Images
+      - name: Build Docker image - Eureka
+        run: docker build -t eureka-server ./tema06-eureka-server
+
+      - name: Build Docker image - Vuelo
+        run: docker build -t vuelo-service ./tema06-vuelo-service
