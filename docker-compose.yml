@@ -1,0 +1,56 @@
+# version: "3.9"
+
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - proyecto-dawii
+
+  eureka-server:
+    build: ./tema06-eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - proyecto-dawii
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - proyecto-dawii
+
+  vuelo-service:
+    build: ./tema06-vuelo-service
+    container_name: vuelo-service
+    depends_on:
+      - mysql
+      - eureka-server
+      - zipkin
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${VUELO_DB_NAME}?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: ${VUELO_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${VUELO_DB_PASSWORD}
+    ports:
+      - "8081:8081"
+    networks:
+      - proyecto-dawii
+
+volumes:
+  mysql_data:
+
+networks:
+  proyecto-dawii:
+    driver: bridge
