@@ -1,0 +1,30 @@
+# Maven
+target/
+*.class
+*.jar
+
+# Logs
+*.log
+logs/
+*.tmp
+*.swp
+*.swo
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+.metadata/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Entorno
+.env
+.env.*
+application-local.properties
+docker-compose.override.yml

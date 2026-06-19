@@ -1,0 +1,42 @@
+# version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
+    networks:
+      - red-vuelos
+
+  eureka-server:
+    build:
+      context: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - red-vuelos
+
+  servicio-vuelos:
+    build:
+      context: ./tema06-servicio-vuelos
+    container_name: servicio-vuelos
+    depends_on:
+      - mysql
+      - eureka-server
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${VUELO_DB_NAME}?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: ${VUELO_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${VUELO_DB_PASSWORD}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+    networks:
+      - red-vuelos
+
+networks:
+  red-vuelos:
+    driver: bridge
