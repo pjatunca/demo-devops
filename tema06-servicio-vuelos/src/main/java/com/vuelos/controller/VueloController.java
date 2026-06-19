@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vuelos.model.Vuelo;
 import com.vuelos.services.VueloService;
 
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 @RestController
 @RequestMapping("/api/vuelos")
 public class VueloController {
@@ -25,6 +28,7 @@ public class VueloController {
 
 	@GetMapping
 	public ResponseEntity<List<Vuelo>> listarVuelos() {
+		log.info("Estas realizando un listado");
 		List<Vuelo> vuelos = service.listarVuelos();
 		if (vuelos.isEmpty()) {
 			return ResponseEntity.noContent().build();
